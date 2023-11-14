@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="crudApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Example</title>
+</head>
+<body ng-controller="crudController">
+    <div>
+        <h1>CRUD Example</h1>
+
+        <div>
+            <h2>Create</h2>
+            <label for="createNameInput">Name:</label>
+            <input type="text" id="createNameInput" ng-model="createName" />
+            <br>
+            <label for="createDescriptionInput">Description:</label>
+            <input type="text" id="createDescriptionInput" ng-model="createDescription" />
+            <br>
+            <button ng-click="createItem()">Create Item</button>
+        </div>
+
+        <div>
+            <h2>Read</h2>
+            <ul>
+                <li ng-repeat="item in items">
+                    <p>ID: {{ item.id }}</p>
+                    <p>Name: {{ item.name }}</p>
+                    <p>Description: {{ item.description }}</p>
+                    <hr>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Update section with three input fields -->
+        <div>
+            <h2>Update</h2>
+            <label for="updateIdInput">ID:</label>
+            <input type="number" id="updateIdInput" ng-model="updateId" />
+            <br>
+            <label for="updateNameInput">New Name:</label>
+            <input type="text" id="updateNameInput" ng-model="updateName" />
+            <br>
+            <label for="updateDescriptionInput">New Description:</label>
+            <input type="text" id="updateDescriptionInput" ng-model="updateDescription" />
+            <br>
+            <button ng-click="updateItem()">Update Item</button>
+        </div>
+
+        <div>
+            <h2>Delete</h2>
+            <label for="deleteIdInput">ID:</label>
+            <input type="number" id="deleteIdInput" ng-model="deleteId" />
+            <button ng-click="deleteItem()">Delete Item</button>
+        </div>
+    </div>
+
+    <script>
+        var app = angular.module('crudApp', []);
+
+        app.controller('crudController', function($scope, $http) {
+            $scope.createItem = function() {
+                try {
+                    var nameInput = $scope.createName;
+                    var descriptionInput = $scope.createDescription;
+
+                    $http.post('http://127.0.0.1:8000/items/', {
+                        name: nameInput,
+                        description: descriptionInput,
+                    }).then(function(response) {
+                        $scope.getData();
+                    }).catch(function(error) {
+                        console.error('Error creating item:', error);
+                    });
+                } catch (error) {
+                    console.error('Error creating item:', error);
+                }
+            };
+
+            $scope.getData = function() {
+                try {
+                    $http.get('http://127.0.0.1:8000/items/').then(function(response) {
+                        $scope.items = response.data;
+                    }).catch(function(error) {
+                        console.error('Error fetching data:', error);
+                    });
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+
+            $scope.updateItem = function() {
+                try {
+                    var idInput = $scope.updateId;
+                    var nameInput = $scope.updateName;
+                    var descriptionInput = $scope.updateDescription;
+
+                    $http.put('http://127.0.0.1:8000/items/' + idInput, {
+                        name: nameInput,
+                        description: descriptionInput,
+                    }).then(function(response) {
+                        $scope.getData();
+                    }).catch(function(error) {
+                        console.error('Error updating item:', error);
+                    });
+                } catch (error) {
+                    console.error('Error updating item:', error);
+                }
+            };
+
+            $scope.deleteItem = function() {
+                try {
+                    var id = $scope.deleteId;
+                    $http.delete('http://127.0.0.1:8000/items/' + id).then(function(response) {
+                        console.log('Item deleted:', response.data);
+                        $scope.getData();
+                    }).catch(function(error) {
+                        console.error('Error deleting item:', error);
+                    });
+                } catch (error) {
+                    console.error('Error deleting item:', error);
+                }
+            };
+
+            // Call the getData function when the page loads
+            $scope.getData();
+        });
+    </script>
+</body>
+</html>

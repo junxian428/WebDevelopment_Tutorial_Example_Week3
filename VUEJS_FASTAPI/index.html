@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Add the Vue.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Example</title>
+</head>
+<body>
+    <div id="app">
+        <h1>CRUD Example</h1>
+
+        <div>
+            <h2>Create</h2>
+            <label for="createNameInput">Name:</label>
+            <input type="text" id="createNameInput" v-model="createName" />
+            <br>
+            <label for="createDescriptionInput">Description:</label>
+            <input type="text" id="createDescriptionInput" v-model="createDescription" />
+            <br>
+            <button @click="createItem">Create Item</button>
+        </div>
+
+        <div>
+            <h2>Read</h2>
+            <ul>
+                <li v-for="item in items" :key="item.id">
+                    <p>ID: {{ item.id }}</p>
+                    <p>Name: {{ item.name }}</p>
+                    <p>Description: {{ item.description }}</p>
+                    <hr>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Update section with three input fields -->
+        <div>
+            <h2>Update</h2>
+            <label for="updateIdInput">ID:</label>
+            <input type="number" id="updateIdInput" v-model="updateId" />
+            <br>
+            <label for="updateNameInput">New Name:</label>
+            <input type="text" id="updateNameInput" v-model="updateName" />
+            <br>
+            <label for="updateDescriptionInput">New Description:</label>
+            <input type="text" id="updateDescriptionInput" v-model="updateDescription" />
+            <br>
+            <button @click="updateItem">Update Item</button>
+        </div>
+
+        <div>
+            <h2>Delete</h2>
+            <label for="deleteIdInput">ID:</label>
+            <input type="number" id="deleteIdInput" v-model="deleteId" />
+            <button @click="deleteItem">Delete Item</button>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                createName: '',
+                createDescription: '',
+                updateId: '',
+                updateName: '',
+                updateDescription: '',
+                deleteId: '',
+                items: [],
+            },
+            methods: {
+                        async createItem() {
+                            try {
+                                // Use Vue data properties for input values
+                                const nameInput = this.createName;
+                                const descriptionInput = this.createDescription;
+
+                                // Make the create item request
+                                await axios.post('http://127.0.0.1:8000/items/', {
+                                    name: nameInput,
+                                    description: descriptionInput,
+                                });
+
+                                // Refresh the data display
+                                this.getData();
+                            } catch (error) {
+                                console.error('Error creating item:', error);
+                            }
+                        },
+                        async getData() {
+                            try {
+                                const response = await axios.get('http://127.0.0.1:8000/items/');
+                                
+                                // Update Vue data property with fetched data
+                                this.items = response.data;
+                            } catch (error) {
+                                console.error('Error fetching data:', error);
+                            }
+                        },
+                        async updateItem() {
+                            try {
+                                const idInput = this.updateId;
+                                const nameInput = this.updateName;
+                                const descriptionInput = this.updateDescription;
+
+                                // Make the update item request
+                                await axios.put(`http://127.0.0.1:8000/items/${idInput}`, {
+                                    name: nameInput,
+                                    description: descriptionInput,
+                                });
+
+                                // Refresh the data display
+                                this.getData();
+                            } catch (error) {
+                                console.error('Error updating item:', error);
+                            }
+                        },
+                        deleteItem() {
+                            try {
+                                const id = this.deleteId;
+                                axios.delete(`http://127.0.0.1:8000/items/${id}`)
+                                    .then(response => {
+                                        console.log('Item deleted:', response.data);
+                                        // Refresh the data display after deletion
+                                        this.getData();
+                                    })
+                                    .catch(error => console.error('Error deleting item:', error));
+                            } catch (error) {
+                                console.error('Error deleting item:', error);
+                            }
+                        }
+                    },
+
+            mounted() {
+                // Call the getData function when the page loads
+                this.getData();
+            }
+        });
+    </script>
+</body>
+</html>

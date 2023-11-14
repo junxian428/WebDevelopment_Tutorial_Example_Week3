@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Example</title>
+</head>
+<body>
+    <h1>CRUD Example</h1>
+
+    <div>
+        <h2>Create</h2>
+        <label for="createInput">Name:</label>
+        <input type="text" id="createInput" />
+        <button onclick="createItem()">Create Item</button>
+    </div>
+
+    <div>
+        <h2>Read</h2>
+        <button onclick="getItems()">Get Items</button>
+        <ul id="itemsList"></ul>
+    </div>
+
+    <div>
+        <h2>Update</h2>
+        <label for="updateIdInput">ID:</label>
+        <input type="number" id="updateIdInput" />
+        <label for="updateNameInput">New Name:</label>
+        <input type="text" id="updateNameInput" />
+        <button onclick="updateItem()">Update Item</button>
+    </div>
+
+    <div>
+        <h2>Delete</h2>
+        <label for="deleteIdInput">ID:</label>
+        <input type="number" id="deleteIdInput" />
+        <button onclick="deleteItem()">Delete Item</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const apiUrl = 'http://localhost:8000/items'; // Replace with your actual API endpoint
+
+        function createItem() {
+            const name = document.getElementById('createInput').value;
+            axios.post(apiUrl, { name })
+                .then(response => console.log('Item created:', response.data))
+                .catch(error => console.error('Error creating item:', error));
+        }
+
+        function getItems() {
+            axios.get(apiUrl)
+                .then(response => {
+                    console.log('Response:', response); // Log the entire response
+
+                    const itemsList = document.getElementById('itemsList');
+
+                    // Check if the response data has an "items" key and it's an array
+                    if (response.data.items && Array.isArray(response.data.items)) {
+                        itemsList.innerHTML = response.data.items.map(item => `<li>${item.name}</li>`).join('');
+                    } else {
+                        console.error('Error getting items:', 'Response data does not have "items" key or "items" is not an array:', response.data);
+                    }
+                })
+                .catch(error => console.error('Error getting items:', error));
+        }
+
+
+        function updateItem() {
+            const id = document.getElementById('updateIdInput').value;
+            const newName = document.getElementById('updateNameInput').value;
+            axios.put(`${apiUrl}/${id}`, { name: newName })
+                .then(response => console.log('Item updated:', response.data))
+                .catch(error => console.error('Error updating item:', error));
+        }
+
+        function deleteItem() {
+            const id = document.getElementById('deleteIdInput').value;
+            axios.delete(`${apiUrl}/${id}`)
+                .then(response => console.log('Item deleted:', response.data))
+                .catch(error => console.error('Error deleting item:', error));
+        }
+    </script>
+</body>
+</html>

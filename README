@@ -1,0 +1,144 @@
+For FASTAPI 
+
+https://fastapi.tiangolo.com/tutorial/
+
+Documentation
+
+https://fastapi.tiangolo.com/tutorial/first-steps/
+
+pip install fastapi uvicorn jinja2
+
+python -m uvicorn Backend:app --reload
+
+//uvicorn Step1:app --reload
+
+uvicorn : The term 'uvicorn' is not recognized as the name of a cmdlet, function, script file, or 
+operable program. Check the spelling of the name, or if a path was included, verify that the path is 
+correct and try again.
+At line:1 char:1
++ uvicorn Step1:app --reload
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (uvicorn:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+
+ Step 1:
+
+ python -m uvicorn Step1:app --reload  
+
+
+ Hello World Success 
+
+http://localhost:8000/
+
+{"message":"Hello World"}
+
+ Step 2:
+
+python -m uvicorn Step2:app --reload
+
+ CRUD 
+
+Read: http://localhost:8000/items/
+Read by ID: http://localhost:8000/items/
+Create POST reqeust: http://localhost:8000/items
+JSON body:
+{
+  "name": "Example Item",
+  "description": "This is a sample item."
+}
+
+Response (HTTP 200):
+
+{
+    "message": "Item created successfully",
+    "item": {
+        "name": "Example Item",
+        "description": "This is a sample item."
+    }
+}
+
+Put Request: http://localhost:8000/items/0
+JSON Body:
+{
+  "name": "Example Item1",
+  "description": "This is a sample item."
+}
+Response (HTTP 200):
+{
+    "message": "Item updated successfully",
+    "item": {
+        "name": "Example Item1",
+        "description": "This is a sample item."
+    }
+}
+
+Delete Request: http://localhost:8000/items/0
+Response (HTTP 200):
+{
+    "message": "Item deleted successfully",
+    "item": {
+        "name": "Example Item5",
+        "description": "This is a sample item."
+    }
+}
+
+
+CORS issue can be solved through open Step1CORS.py and Step2CORS.py which already enable CORS 
+
+Last but not least add Database SQLite
+
+pip install fastapi[all] sqlalchemy
+
+
+For Step3_DB.py
+
+GET http://localhost:8000/items
+
+[
+    {
+        "id": 1,
+        "name": "123",
+        "description": null
+    },
+    {
+        "id": 2,
+        "name": "123",
+        "description": null
+    },
+    {
+        "id": 3,
+        "name": "213",
+        "description": null
+    },
+    {
+        "id": 4,
+        "name": "213",
+        "description": null
+    },
+    {
+        "id": 5,
+        "name": "1234576",
+        "description": null
+    },
+    {
+        "id": 6,
+        "name": "123",
+        "description": null
+    },
+    {
+        "id": 7,
+        "name": "123",
+        "description": null
+    },
+    {
+        "id": 8,
+        "name": "123",
+        "description": null
+    },
+    {
+        "id": 9,
+        "name": "123",
+        "description": null
+    }
+]
